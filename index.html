@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>90-Day Mission Tracker</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <div class="wrap top">
+    <div>
+      <div class="eyebrow">90-day personal operating system</div>
+      <h1>Mission Tracker</h1>
+      <p>Track your AI engineering course, SSB, CDS, job search and fitness — one day at a time.</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn-white" id="exportBtn">Export data (CSV)</button>
+      <button class="btn-glass" id="backupBtn">Download backup</button>
+      <button class="btn-glass" onclick="window.print()">Print report</button>
+    </div>
+  </div>
+</header>
+<main>
+  <section class="datebar">
+    <div>
+      <div class="date-label" id="prettyDate">Today's plan</div>
+      <div class="subdate" id="dayNumber">90-day plan · Save progress as you go</div>
+    </div>
+    <div class="date-controls">
+      <button id="prevDay" aria-label="Previous day">←</button>
+      <input type="date" id="datePicker" aria-label="Select date">
+      <button id="nextDay" aria-label="Next day">→</button>
+      <button class="small-btn" id="todayBtn">Today</button>
+    </div>
+  </section>
+
+  <section class="metrics" aria-label="Daily summary">
+    <div class="metric"><div class="label">TODAY'S COMPLETION</div><div class="value" id="completionMetric">0%</div><div class="hint" id="completionHint">0 of 0 tasks complete</div></div>
+    <div class="metric"><div class="label">AI COURSE</div><div class="value" id="aiMetric">0%</div><div class="hint">Course and coding tasks</div></div>
+    <div class="metric"><div class="label">DEFENCE PREP</div><div class="value" id="defenceMetric">0%</div><div class="hint">SSB and CDS tasks</div></div>
+    <div class="metric"><div class="label">7-DAY AVERAGE</div><div class="value" id="averageMetric">—</div><div class="hint">Based on saved daily records</div></div>
+  </section>
+
+  <div class="layout">
+    <section class="panel">
+      <div class="panel-head">
+        <div><h2>Today's routine</h2><p class="desc">Check off tasks when completed. Changes save automatically in this browser.</p></div>
+        <button class="secondary-btn" id="resetDayBtn">Reset day</button>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="dailyProgressFill"></div></div>
+      <div class="desc" id="progressText">Your progress will appear here.</div>
+      <div class="filter-row" id="filters">
+        <button class="active" data-filter="all">All tasks</button>
+        <button data-filter="open">Not completed</button>
+        <button data-filter="done">Completed</button>
+      </div>
+      <div id="taskList"></div>
+      <div style="margin-top:18px">
+        <label for="dailyNotes" style="font-size:13px;font-weight:800">Daily notes / reflection</label>
+        <textarea class="notes" id="dailyNotes" placeholder="What went well? What blocked you? What will you improve tomorrow?"></textarea>
+        <div class="desc" style="margin-top:5px">Notes are saved separately for each date.</div>
+      </div>
+    </section>
+
+    <aside>
+      <section class="panel">
+        <div class="panel-head"><div><h2>Daily analysis</h2><p class="desc">Where your effort went today</p></div></div>
+        <div id="categoryAnalysis"></div>
+        <div style="border-top:1px solid var(--line);margin-top:16px;padding-top:14px">
+          <div class="category-row"><span>Missed tasks</span><strong id="missedCount">0</strong></div>
+          <div class="category-row"><span>Streak of productive days</span><strong id="streakCount">0 days</strong></div>
+          <div class="category-row"><span>Consistency score</span><strong id="consistencyScore">0%</strong></div>
+        </div>
+      </section>
+      <section class="panel">
+        <div class="panel-head"><div><h2>Weekly review</h2><p class="desc">A small review keeps the plan realistic.</p></div></div>
+        <label for="weeklyReflection" style="font-size:12px;font-weight:700">What is the biggest win this week?</label>
+        <textarea id="weeklyReflection" class="notes" style="min-height:65px" placeholder="Write your biggest win..."></textarea>
+        <label for="weeklyBlocker" style="display:block;font-size:12px;font-weight:700;margin-top:10px">What needs to change?</label>
+        <textarea id="weeklyBlocker" class="notes" style="min-height:65px" placeholder="Name one blocker and one fix..."></textarea>
+        <div class="desc" style="margin-top:5px">Weekly review is saved for the selected date's week.</div>
+      </section>
+    </aside>
+  </div>
+
+  <section class="panel" id="progressPanel">
+    <div class="panel-head">
+      <div><h2>Progress graph</h2><p class="desc">Daily completion rate across your saved dates. Empty dates are shown as gaps, not zeroes.</p></div>
+      <select id="chartRange" aria-label="Graph date range">
+        <option value="7">Last 7 days</option><option value="14">Last 14 days</option><option value="30" selected>Last 30 days</option><option value="90">Last 90 days</option>
+      </select>
+    </div>
+    <div class="chart-wrap"><canvas id="progressChart" aria-label="Daily completion graph"></canvas></div>
+    <div class="legend"><span><i class="dot" style="background:#4263eb"></i>Daily completion %</span><span><i class="dot" style="background:#15966a"></i>7-day rolling average</span></div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <div><h2>Daily data log</h2><p class="desc">All saved dates, completion rates, completed tasks and missed tasks.</p></div>
+      <button class="small-btn" id="showAllBtn">Show all records</button>
+    </div>
+    <div class="data-table-wrap">
+      <table>
+        <thead><tr><th>Date</th><th>Completed</th><th>Total tasks</th><th>Rate</th><th>Missed tasks</th><th>Daily notes</th></tr></thead>
+        <tbody id="historyBody"></tbody>
+      </table>
+    </div>
+    <div class="desc" style="margin-top:10px">The data log lists dates where you have checked at least one task, written notes, or saved a review.</div>
+  </section>
+  <div class="footer-note">Your data stays in this browser unless you export it. Download a backup regularly if you want to keep your records.</div>
+</main>
+  <script src="script.js" defer></script>
+</body>
+</html>
